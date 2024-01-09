@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS Drum Kit</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
+
 <body>
 
 
@@ -58,10 +60,25 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
+  <script>
+    document.body.addEventListener('keydown', function (e) {
+      const keyASC = e.key.charCodeAt(0) // Number typeA
 
-</script>
+      // Unload the previous playing key box styling
+      const previousPlayingKey = document.querySelector('.keys .key.playing')
+      if (previousPlayingKey) previousPlayingKey.classList.remove('playing')
+
+      //Module 1 after press the key, the corresponding box will scale up and have the box shadow
+      const playingKey = document.querySelector(`.keys div[data-key="${keyASC}"]`)
+      if (playingKey) playingKey.classList.add('playing')
+
+      //Module 2 after press the key, play the corresponding data-key audio
+      const playingAudio = document.querySelector(`audio[data-key="${keyASC}"]`)
+      if (playingAudio) playingAudio.play();
+    })
+  </script>
 
 
 </body>
+
 </html>
