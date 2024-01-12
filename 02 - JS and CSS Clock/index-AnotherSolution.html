@@ -82,36 +82,23 @@
     const minHand = document.querySelector('.min-hand')
     const hourHand = document.querySelector('.hour-hand')
 
+    let secCount = 0
+    let minCount = 0
+    let hourCount = 0
     function paintClockHands() {
       const today = new Date()
       let [h, m, s] = [today.getHours(), today.getMinutes(), today.getSeconds()]
 
-      // To resolve the transition issue of clock hands when 
-      // second hand: 59 -> 0
-      // min hand: 59 -> 0
-      // hour hand: 11 -> 0
-      if (s === 0) {
-        secHand.classList.add('removeTransition')
-      } else {
-        secHand.classList.remove('removeTransition')
-      }
-      if (m === 0 && s === 0) {
-        minHand.classList.add('removeTransition')
-      } else {
-        minHand.classList.remove('removeTransition')
-      }
-      if (h === 0 && m === 0 && s === 0) {
-        hourHand.classList.add('removeTransition')
-      } else {
-        hourHand.classList.remove('removeTransition')
-      }
+      if (s === 0) secCount++
+      if (m === 0 && s === 0) minCount++
+      if (h === 0 && m === 0 && s === 0) hourCount++
 
-      secHand.style.transform = `rotate(${s * 6 + 90}deg)`
-      minHand.style.transform = `rotate(${(m + s / 60) * 6 + 90}deg)`
+      secHand.style.transform = `rotate(${(s + secCount * 60) * 6 + 90}deg)`
+      minHand.style.transform = `rotate(${((m + minCount * 60) + s / 60) * 6 + 90}deg)`
 
       // h is 0~23 
       h = h >= 12 ? h - 12 : h
-      hourHand.style.transform = `rotate(${(h + (m + s / 60) / 60) * 30 + 90}deg)`
+      hourHand.style.transform = `rotate(${((h + hourCount * 12) + (m + s / 60) / 60) * 30 + 90}deg)`
     }
 
     paintClockHands()
