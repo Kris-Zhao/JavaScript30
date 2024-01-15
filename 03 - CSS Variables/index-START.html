@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Scoped CSS Variables and JS</title>
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
+
 <body>
   <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
 
@@ -22,6 +24,22 @@
   <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
 
   <style>
+    /* Basically refer to html */
+    :root {
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 10px:
+    }
+
+    img {
+      background: var(--base);
+      padding: var(--spacing);
+      filter: blur(var(--blur));
+    }
+
+    .hl {
+      color: var(--base);
+    }
 
     /*
       misc styles, nothing to do with CSS variables
@@ -46,7 +64,31 @@
   </style>
 
   <script>
+    // const r = document.querySelector(':root')
+    function handleUpdate(e) {
+      let { tagName, name, value, dataset: { sizing } } = e.target
+      if (tagName === 'INPUT') {
+        // Cleaner way to do:
+        if (!sizing) sizing = ''
+        document.documentElement.style.setProperty(`--${name}`, value + sizing)
+
+        // More codes to do:
+        /* switch (id) {
+          case "spacing":
+            r.style.setProperty('--spacing', value + sizing)
+            break
+          case "blur":
+            r.style.setProperty('--blur', value + sizing)
+            break
+          case "base":
+            r.style.setProperty('--base', value)
+            break
+        } */
+      }
+    }
+    document.querySelector('.controls').addEventListener('input', handleUpdate)
   </script>
 
 </body>
+
 </html>
