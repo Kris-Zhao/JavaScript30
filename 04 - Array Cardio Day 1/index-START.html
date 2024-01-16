@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Array Cardio 💪</title>
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
+
 <body>
   <p><em>Psst: have a look at the JavaScript Console</em> 💁</p>
   <script>
@@ -35,32 +37,90 @@
       'Berne, Eric', 'Berra, Yogi', 'Berry, Wendell', 'Bevan, Aneurin', 'Ben-Gurion, David', 'Bevel, Ken', 'Biden, Joseph', 'Bennington, Chester', 'Bierce, Ambrose',
       'Billings, Josh', 'Birrell, Augustine', 'Blair, Tony', 'Beecher, Henry', 'Biondo, Frank'
     ];
-    
+
     // Array.prototype.filter()
     // 1. Filter the list of inventors for those who were born in the 1500's
+    const arr1 = inventors.filter(inventor => inventor.year >= 1500 && inventor.year < 1600)
+    console.log(arr1);
+    console.table(arr1);
 
     // Array.prototype.map()
     // 2. Give us an array of the inventors first and last names
+    const arr2_1 = inventors.map(inventor => ({ first: inventor.first, last: inventor.last }))
+    const arr2_2 = inventors.map(inventor => `${inventor.first} ${inventor.last}`)
+    console.log(arr2_1);
+    console.log(arr2_2);
 
     // Array.prototype.sort()
     // 3. Sort the inventors by birthdate, oldest to youngest
+    // console.log can't show the correct order of my sort function
+    const arr3 = inventors.sort((a, b) => {
+      if (a.year < b.year) {
+        return -1
+      }
+      if (a.year > b.year) {
+        return 1
+      }
+      return 0
+    })
+    console.log(arr3);
+    console.table(arr3);
+
 
     // Array.prototype.reduce()
     // 4. How many years did all the inventors live all together?
+    console.log(inventors.reduce((prev, currentInventor) => prev + currentInventor.passed - currentInventor.year, 0));
 
     // 5. Sort the inventors by years lived
+    console.log(inventors.sort((a, b) => (a.passed - a.year) - (b.passed - b.year)));
+    console.table(inventors.sort((a, b) => (a.passed - a.year) - (b.passed - b.year)));
+
 
     // 6. create a list of Boulevards in Paris that contain 'de' anywhere in the name
     // https://en.wikipedia.org/wiki/Category:Boulevards_in_Paris
-
+    /* const allBoulevards = document.querySelectorAll('.mw-category a')
+    const aContentArr = Array.from(allBoulevards).map(a => a.textContent)
+    console.log(aContentArr.filter(a => a.includes('de'))); */
 
     // 7. sort Exercise
     // Sort the people alphabetically by last name
+    console.log(people.sort((a, b) => {
+      const aLastNameUppercase = a.split(', ')[0].toUpperCase()
+      const bLastNameUppercase = b.split(', ')[0].toUpperCase()
+      if (aLastNameUppercase < bLastNameUppercase) {
+        return -1
+      }
+      if (aLastNameUppercase > bLastNameUppercase) {
+        return 1
+      }
+      return 0
+    }));
 
     // 8. Reduce Exercise
     // Sum up the instances of each of these
-    const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck' ];
+    const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck'];
+    // reduce method
+    const sumInstances = data.reduce((prevObj, current) => {
+      if (Object.keys(prevObj).includes(current)) {
+        prevObj[current]++
+      } else {
+        prevObj[current] = 1
+      }
+      return prevObj
+    }, {})
+    console.log(sumInstances);
 
+    // forEach method
+    /* const obj = {}
+    data.forEach(data => {
+      if (Object.keys(obj).includes(data)) {
+        obj[data]++
+      } else {
+        obj[data] = 1
+      }
+    })
+    console.log(obj); */
   </script>
 </body>
+
 </html>
