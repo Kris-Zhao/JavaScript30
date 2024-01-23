@@ -32,6 +32,7 @@
       min-height: 100vh;
       overflow: hidden;
 
+      /* Added by me */
       display: flex;
     }
 
@@ -51,10 +52,12 @@
       background-size: cover;
       background-position: center;
 
-      flex-grow: 1;
+      /* Added by me */
+      flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
+      align-items: center;
     }
 
     .panel1 {
@@ -81,7 +84,27 @@
     .panel>* {
       margin: 0;
       width: 100%;
-      transition: transform 0.5s, flex 0.8s, opacity 0.8s;
+      transition: transform 0.5s;
+
+      /* Added by me */
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Added by me */
+    .panel p:first-child {
+      transform: translateY(-100%);
+    }
+
+    .panel p:last-child {
+      transform: translateY(100%);
+    }
+
+    .panel.showText p:first-child,
+    .panel.showText p:last-child {
+      transform: translateY(0);
     }
 
     .panel p {
@@ -97,18 +120,9 @@
 
     .panel.open {
       font-size: 40px;
-    }
 
-    .panel>p:first-child {
-      opacity: 0;
-      /* transition:
-        flex 5s linear; */
-    }
-
-    .panel>p:last-child {
-      opacity: 0;
-      /* transition:
-        justify-content 2s linear; */
+      /* Added by me */
+      flex: 5
     }
   </style>
 
@@ -142,26 +156,21 @@
   </div>
 
   <script>
-    Array.from(document.querySelectorAll('.panel')).forEach(panel => {
-      panel.addEventListener('mouseenter', function (e) {
-        if (e.target.className.includes('panel')) {
-          e.target.style.flexGrow = 5
-          e.target.style.justifyContent = 'space-evenly'
-          e.target.children[0].style.opacity = 1
-          e.target.children[1].style.fontSize = '6em'
-          e.target.children[2].style.opacity = 1
+    function open() {
+      this.classList.toggle('open')
+    }
 
-        }
-      })
-      panel.addEventListener('mouseleave', function (e) {
-        if (e.target.className.includes('panel')) {
-          e.target.style.flexGrow = 1
-          e.target.style.justifyContent = 'space-between'
-          e.target.children[0].style.opacity = 0
-          e.target.children[1].style.fontSize = '4em'
-          e.target.children[2].style.opacity = 0
-        }
-      })
+    function showText(e) {
+      // To avoid double toggle by flex-grow and font-size at each's transition end
+      // flex-grow firstly finished the transition, then font-size
+      if (e.propertyName.includes('flex')) {
+        this.classList.toggle('showText')
+      }
+    }
+
+    document.querySelectorAll('.panel').forEach(panel => {
+      panel.addEventListener('click', open)
+      panel.addEventListener('transitionend', showText)
     })
   </script>
 </body>
