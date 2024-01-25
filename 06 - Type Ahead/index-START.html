@@ -1,23 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Type Ahead 👀</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
+
 <body>
 
   <form class="search-form">
     <input type="text" class="search" placeholder="City or State">
     <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
+      <!-- <li>Filter for a city</li>
+      <li>or a state</li> -->
     </ul>
   </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+  <script>
 
-</script>
+    const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    const places = []
+    fetch(endpoint)
+      .then(data => data.json())
+      .then(placeArr => places.push(...placeArr))
+
+    function getMyLocation() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(position => {
+            return resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            })
+          }, () => {
+            reject('Failed to get the current location')
+          }
+          )
+        } else {
+          reject('Your browser does not support to get the current location')
+        }
+      })
+    }
+
+    function getDistance(lat1, lng1, lat2, lng2) {
+      const radLat1 = lat1 * Math.PI / 180.0;
+      const radLat2 = lat2 * Math.PI / 180.0;
+      const a = radLat1 - radLat2;
+      const b = lng1 * Math.PI / 180.0 - lng2 * Math.PI / 180.0;
+      let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
+        Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+      s = s * 6378.137;// EARTH_RADIUS;
+      s = Math.round(s * 10000) / 10000;
+      return s;
+    }
+
+
+    async function sortPlacesByLocation() {
+      const myLocation = await getMyLocation()
+      return places.sort((a, b) => {
+        const meAndADistance = getDistance(myLocation.latitude, myLocation.longitude, a.latitude, a.longitude);
+        const meAndBDistance = getDistance(myLocation.latitude, myLocation.longitude, b.latitude, b.longitude);
+        if (meAndADistance > meAndBDistance) {
+          return 1
+        } else {
+          return -1
+        }
+      })
+    }
+
+    async function findMatches(matchWords, places) {
+      return (await sortPlacesByLocation()).filter(place => {
+        const regex = new RegExp(matchWords, 'gi')
+        return place.city.match(regex) || place.state.match(regex)
+      })
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    const suggestions = document.querySelector('.suggestions')
+    async function displayMatches() {
+      if (!this.value) {
+        suggestions.innerHTML = ''
+        return
+      }
+      const matchedPlaces = await findMatches(this.value, places)
+      const regex = new RegExp(this.value, 'gi')
+      const matchedPlacesHTMLStr = matchedPlaces.map(place => {
+        const cityHLName = place.city.replace(regex, `<span class="hl">${this.value}</span>`)
+        const stateHLName = place.state.replace(regex, `<span class="hl">${this.value}</span>`)
+        return `
+          <li>
+            <span class="name">${cityHLName}, ${stateHLName}</span>
+            <span class="population">${numberWithCommas(place.population)}</span>
+          </li>
+        `
+      }).join('')
+      suggestions.innerHTML = matchedPlacesHTMLStr
+    }
+
+    const search = document.querySelector('.search')
+    search.addEventListener('change', displayMatches)
+    search.addEventListener('keyup', displayMatches)
+
+  </script>
 </body>
+
 </html>
