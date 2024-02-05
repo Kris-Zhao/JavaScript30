@@ -98,22 +98,30 @@
   </div>
 
   <script>
-    function checkCheckbox(e) {
-      if (!e.shiftKey) {
-        return
+    const checkboxes = document.querySelectorAll('.inbox input[type="checkbox"]')
+
+    let lastCheckedBox
+
+    function handleCheck(e) {
+      let inBetween = false
+
+      if (e.shiftKey && this.checked) {
+        checkboxes.forEach(checkbox => {
+          if (checkbox === lastCheckedBox || checkbox === this) {
+            inBetween = !inBetween
+          }
+          if (inBetween) {
+            checkbox.checked = true
+          }
+        });
       }
-      const checkedCB = document.querySelectorAll('input:checked')
-      if (checkedCB.length > 1) {
-        let startItem = checkedCB[0].parentNode
-        const endItem = checkedCB[checkedCB.length - 1].parentNode
-        while (startItem !== endItem) {
-          (startItem.children)[0].checked = true
-          startItem = startItem.nextSibling.nextSibling;
-        }
-      }
+
+      lastCheckedBox = this
     }
 
-    document.body.addEventListener('click', checkCheckbox)
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('click', handleCheck)
+    });
   </script>
 </body>
 
